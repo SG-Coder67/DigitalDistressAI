@@ -1,5 +1,4 @@
 from flask import Flask, jsonify
-from flask_cors import CORS
 from routes.analyze_text import analyze_text_bp
 from routes.analyze_url import analyze_url_bp
 from routes.analyze_system import analyze_system_bp
