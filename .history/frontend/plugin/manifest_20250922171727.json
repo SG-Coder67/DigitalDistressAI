@@ -3,8 +3,8 @@
   "name": "Jarvis Guardian",
   "version": "1.0",
   "description": "AI-Powered Cybersecurity Assistant",
-  "permissions": ["storage", "tabs", "activeTab", "scripting", "notifications"],
-  "host_permissions": ["http://127.0.0.1:5000/*"],
+  "permissions": ["storage", "tabs", "activeTab", "scripting"],
+  "host_permissions": ["http://127.0.0.1:5000/*"], 
   "action": {
     "default_popup": "popup.html"
   },

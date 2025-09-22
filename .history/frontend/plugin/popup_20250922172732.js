@@ -7,9 +7,10 @@ document.getElementById("checkBtn").addEventListener("click", async () => {
     return;
   }
 
+  // Choose endpoint based on input type
   const endpoint = input.startsWith("http")
-    ? "http://127.0.0.1:5000/analyze/url"
-    : "http://127.0.0.1:5000/analyze/text";
+    ? "http://127.0.0.1:5000/analyze/url"   // calls blueprint URL handler
+    : "http://127.0.0.1:5000/analyze/text"; // calls text analysis
 
   try {
     const res = await fetch(endpoint, {
@@ -18,7 +19,7 @@ document.getElementById("checkBtn").addEventListener("click", async () => {
       body: JSON.stringify({ input })
     });
 
-    if (!res.ok) throw new Error("Backend error");
+    if (!res.ok) throw new Error("Backend returned error");
 
     const data = await res.json();
     resultEl.innerText = `Result: ${data.result}\nReasons: ${data.reasons.join(", ")}`;

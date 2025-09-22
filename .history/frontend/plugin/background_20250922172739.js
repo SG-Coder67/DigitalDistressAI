@@ -1,10 +1,13 @@
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (!changeInfo.url) return;
+  if (!changeInfo.url) return; // only act on actual navigation
+
+  const url = changeInfo.url;
+  console.log("User navigated to:", url);
 
   fetch("http://127.0.0.1:5000/analyze/url", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input: changeInfo.url })
+    body: JSON.stringify({ input: url })
   })
     .then(res => res.json())
     .then(data => {

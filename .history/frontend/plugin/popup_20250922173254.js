@@ -7,15 +7,11 @@ document.getElementById("checkBtn").addEventListener("click", async () => {
     return;
   }
 
-  const endpoint = input.startsWith("http")
-    ? "http://127.0.0.1:5000/analyze/url"
-    : "http://127.0.0.1:5000/analyze/text";
-
   try {
-    const res = await fetch(endpoint, {
+    const res = await fetch("http://127.0.0.1:5000/analyze/url", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input })
+      body: JSON.stringify({ input })  // <-- THIS is where your input goes
     });
 
     if (!res.ok) throw new Error("Backend error");

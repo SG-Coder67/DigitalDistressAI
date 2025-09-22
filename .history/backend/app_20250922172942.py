@@ -6,8 +6,7 @@ from routes.analyze_system import analyze_system_bp
 from routes.analyze_audio import analyze_audio_bp
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins (Chrome extension safe)
-app.url_map.strict_slashes = False  # Disable automatic redirect for missing slashes
+CORS(app)  # enable CORS for testing
 
 # Register blueprints
 app.register_blueprint(analyze_text_bp, url_prefix="/analyze/text")
@@ -15,8 +14,9 @@ app.register_blueprint(analyze_url_bp, url_prefix="/analyze/url")
 app.register_blueprint(analyze_system_bp, url_prefix="/analyze/system")
 app.register_blueprint(analyze_audio_bp, url_prefix="/analyze/audio")
 
-# Root check
+# Simple root check
 @app.route("/")
+@app.route("/analyze/url", methods=["POST"], strict_slashes=False)
 def home():
     return {"message": "🚀 Jarvis-Guardian Backend is running!"}
 

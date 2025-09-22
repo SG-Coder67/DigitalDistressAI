@@ -4,7 +4,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   fetch("http://127.0.0.1:5000/analyze/url", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input: changeInfo.url })
+    body: JSON.stringify({ input: changeInfo.url }) // <-- current tab URL
   })
     .then(res => res.json())
     .then(data => {
