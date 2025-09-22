@@ -3,25 +3,15 @@
 from flask import Blueprint, request, jsonify
 from urllib.parse import urlparse
 import sqlite3
-import os
 
+# This is the line that was missing or broken, causing the ImportError
 analyze_url_bp = Blueprint("analyze_url_bp", __name__)
 
-# --- THIS IS THE FIX ---
-# Create an absolute path to the database file to avoid confusion.
-# This assumes your 'backend' folder is the current working directory.
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(os.path.dirname(BASE_DIR), "threats.db")
-# --------------------
+DB_FILE = "threats.db"
 
 def query_db_for_domain(domain):
     """Checks the SQLite database for a given domain."""
-    # Add a check to ensure the database file actually exists.
-    if not os.path.exists(DB_PATH):
-        print(f"!!! DATABASE FILE NOT FOUND at {DB_PATH} !!!")
-        return None
-
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("SELECT threat_type FROM threats WHERE domain = ?", (domain,))
     result = cursor.fetchone()
@@ -35,7 +25,11 @@ def analyze_url():
         return jsonify({"error": "No 'url' key provided"}), 400
 
     url = data.get("url")
-    domain = urlparse(url).netloc.lower()
+    
+    try:
+        domain = urlparse(url).netloc.lower()
+    except Exception:
+        return jsonify({"error": "Invalid URL format"}), 400
     
     db_threat = query_db_for_domain(domain)
     
@@ -49,7 +43,6 @@ def analyze_url():
     return jsonify({
         "input_url": url,
         "result": result,
-        "type": db_threat if db_threat else "benign",
         "reasons": reasons,
         "redirect_url": "https://www.google.com" if result == "malicious" else url
     })

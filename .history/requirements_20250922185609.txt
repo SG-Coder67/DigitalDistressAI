@@ -1,0 +1,24 @@
+# === Backend Core ===
+flask
+flask-cors
+psutil
+
+# === AI / ML ===
+scikit-learn
+transformers
+torch
+numpy
+pandas
+
+# === Audio Analysis (for distress detection) ===
+librosa
+soundfile
+
+# === Utilities ===
+requests
+tqdm
+
+# === Testing ===
+pytest
+Flask==2.3.2
+flask-cors==3.1.2
