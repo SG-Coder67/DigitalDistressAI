@@ -1,35 +1,31 @@
-# Save this as: backend/load_dataset.py
 import sqlite3
 import csv
 from urllib.parse import urlparse
 import os
 
-# Save the database in the same folder as the script
-DB_FILE = "threats.db" 
+DB_FILE = "threats.db"
 CSV_FILE = "malicious_phish.csv"
 
 if os.path.exists(DB_FILE):
     os.remove(DB_FILE)
 
-# Connect to SQLite database (it will be created)
 conn = sqlite3.connect(DB_FILE)
 cursor = conn.cursor()
 
-# Create a table to store threats
+# This CREATE TABLE command includes the 'source' column, which is essential.
 cursor.execute("""
 CREATE TABLE threats (
     domain TEXT PRIMARY KEY,
-    threat_type TEXT NOT NULL
+    threat_type TEXT NOT NULL,
+    source TEXT NOT NULL  --  <-- This column must exist
 );
 """)
-
-# Create an index on the domain column for super-fast lookups
 cursor.execute("CREATE INDEX idx_domain ON threats (domain);")
 
 print(f"Loading data from {CSV_FILE} into {DB_FILE}...")
 with open(CSV_FILE, 'r', encoding='utf-8') as f:
     reader = csv.reader(f)
-    next(reader)  # Skip the header row
+    next(reader)
     count = 0
     for row in reader:
         try:
@@ -37,10 +33,10 @@ with open(CSV_FILE, 'r', encoding='utf-8') as f:
             if threat_type != "benign":
                 domain = urlparse(url).netloc.lower()
                 if domain:
-                    cursor.execute("INSERT OR IGNORE INTO threats (domain, threat_type) VALUES (?, ?)", (domain, threat_type))
+                    # We add 'static_dataset' as the source for all initial threats
+                    cursor.execute("INSERT OR IGNORE INTO threats (domain, threat_type, source) VALUES (?, ?, ?)", (domain, threat_type, 'static_dataset'))
                     count += 1
         except Exception:
-            # This will skip any malformed rows in your CSV file
             continue
 
 conn.commit()
